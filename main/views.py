@@ -1,6 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import PostForm
 from .models import Post
+from django.contrib.auth.decorators import login_required
 
 
 def home_page(request):
@@ -8,7 +9,8 @@ def home_page(request):
     return render(request, 'main/home_page.html', {'posts': posts})
 
 
-def created_post(request):
+@login_required
+def create_post(request):
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
@@ -18,4 +20,17 @@ def created_post(request):
             return redirect('HomePage')
     else:
         form = PostForm()
-    return render(request, 'main/created_page.html', {'form': form})
+    return render(request, 'main/create_page.html', {'form': form})
+
+
+@login_required
+def edit_post(request, id):
+    post = get_object_or_404(Post, id=id)
+    if request.method == 'POST':
+        form = PostForm(request.POST, instance=post)
+        if form.is_valid():
+            form.save()
+            return redirect('HomePage')
+    else:
+        form = PostForm()
+    return render(request, 'main/edit_page.html', {'post': post, 'form': form})
