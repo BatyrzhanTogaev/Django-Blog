@@ -25,7 +25,7 @@ def create_post(request):
 
 @login_required
 def edit_post(request, id):
-    post = get_object_or_404(Post, id=id)
+    post = get_object_or_404(Post, id=id, author=request.user)
     if request.method == 'POST':
         form = PostForm(request.POST, instance=post)
         if form.is_valid():
@@ -34,3 +34,16 @@ def edit_post(request, id):
     else:
         form = PostForm()
     return render(request, 'main/edit_page.html', {'post': post, 'form': form})
+
+
+@login_required
+def delete_post(request, id,):
+    post = get_object_or_404(Post, id=id, author=request.user)
+    if request.method == 'POST':
+        post.delete()
+        return redirect('HomePage')
+
+
+def detail_post(request, id):
+    post = get_object_or_404(Post, id=id)
+    return render(request, 'main/detail_page.html', {'post': post})
