@@ -1,12 +1,19 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import PostForm
+from .forms import PostForm, CategoryForm
 from .models import Post
 from django.contrib.auth.decorators import login_required
 
 
 def home_page(request):
     posts = Post.objects.all()
-    return render(request, 'main/home_page.html', {'posts': posts})
+    if request.method == 'GET':
+        form = CategoryForm(request.GET)
+        if form.is_valid():
+            category_id = form.cleaned_data['category']
+            if category_id:
+                posts = posts.filter(category__id=category_id)
+    return render(request, 'main/home_page.html',
+                  {'posts': posts, 'form': form})
 
 
 @login_required

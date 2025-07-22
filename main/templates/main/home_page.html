@@ -1,4 +1,10 @@
 <h1>Посты</h1>
+
+<form method="GET">
+    {{ form.as_p }}
+    <button type="submit">Выбрать</button>
+</form>
+
 {% for post in posts %}
     <h2><a href="{% url 'DetailPage' post.id %}">{{post.title }}</a></h2>
     <p>{{ post.author }}</p>
