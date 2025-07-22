@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import PostForm, CategoryForm
-from .models import Post
+from .forms import PostForm, CategoryForm, CommentForm
+from .models import Post, Comment
 from django.contrib.auth.decorators import login_required
 
 
@@ -53,4 +53,18 @@ def delete_post(request, id,):
 
 def detail_post(request, id):
     post = get_object_or_404(Post, id=id)
-    return render(request, 'main/detail_page.html', {'post': post})
+    comm = Comment.objects.filter(post=post)
+
+    if request.method == 'POST':
+        comments = CommentForm(request.POST, request.FILES)
+        print(comments.errors)
+        if comments.is_valid():
+            comment = comments.save(commit=False)
+            comment.post = post
+            comment.author = request.user
+            comment.save()
+    else:
+        comments = CommentForm()
+
+    return render(request, 'main/detail_page.html',
+                  {'post': post, 'comments': comments, 'comm': comm})
