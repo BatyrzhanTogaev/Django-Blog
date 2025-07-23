@@ -7,6 +7,15 @@ class PostForm(forms.ModelForm):
         model = Post
         fields = ['title', 'text', 'image', 'category']
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for name, field in self.fields.items():
+            input_type = getattr(field.widget, 'input_type', None)
+            if input_type != 'file':
+                field.widget.attrs.update({'class': 'form-control'})
+            else:
+                field.widget.attrs.update({'class': 'form-control-file'})
+
 
 class CommentForm(forms.ModelForm):
     class Meta:

@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import PostForm, CategoryForm, CommentForm
 from .models import Post, Comment
 from django.contrib.auth.decorators import login_required
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 
 
 def home_page(request):
@@ -68,3 +70,9 @@ def detail_post(request, id):
 
     return render(request, 'main/detail_page.html',
                   {'post': post, 'comments': comments, 'comm': comm})
+
+
+@receiver(post_delete, sender=Post)
+def delete_post_image(sender, instance, **kwards):
+    if instance.image:
+        instance.image.delete(False)
