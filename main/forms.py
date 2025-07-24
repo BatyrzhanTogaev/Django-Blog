@@ -3,6 +3,11 @@ from .models import Post, Comment, Category
 
 
 class PostForm(forms.ModelForm):
+    '''
+    Форма создания поста
+
+    функция init используется для bootstap и styles.css
+    '''
     class Meta:
         model = Post
         fields = ['title', 'text', 'image', 'category']
@@ -18,12 +23,18 @@ class PostForm(forms.ModelForm):
 
 
 class CommentForm(forms.ModelForm):
+    '''
+    Форма для возможности оставить комментарии
+    '''
     class Meta:
         model = Comment
         fields = ['text']
 
 
 class CategoryForm(forms.Form):
+    '''
+    Форма выбора категорий из полного списка
+    '''
     category = forms.ChoiceField(required=False)
 
     def __init__(self, *args, **kwargs):
